@@ -2,13 +2,14 @@ import json
 import pandas as pd
 import os
 import glob
+import numpy as np
 
 def load_subjects_from_file(filename):
     """
     Loads subjects from a JSON file and returns them as a list of dictionaries.
     """
     # Construct the full path using os.path.join
-    full_path = os.path.join('data', 'wanikani', filename)
+    full_path = os.path.join('data', filename)
     with open(full_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
     return data 
@@ -19,7 +20,12 @@ def parse_subjects(subjects):
     """
     parsed_subjects = []
     for subject in subjects:
-        parsed_subjects.append(parse_subject_data(subject))
+        parsed_data = parse_subject_data(subject)
+        # Convert numpy arrays to lists if present
+        for key, value in parsed_data.items():
+            if isinstance(value, np.ndarray):
+                parsed_data[key] = value.tolist()
+        parsed_subjects.append(parsed_data)
     return parsed_subjects
 
 def parse_subject_data(subject_data):
@@ -75,6 +81,7 @@ def parse_subject_data(subject_data):
     
     if subject_type == 'radical':
         parsed_data.update({
+            'meaning_mnemonic': data.get('meaning_mnemonic'),
             'character_images': [image['url'] for image in data.get('character_images', [])]
         })
 
@@ -96,7 +103,7 @@ def save_to_excel(parsed_subjects, output_filename):
     df = pd.DataFrame(parsed_subjects)
     
     # Construct the full path using os.path.join for the output file
-    full_output_path = os.path.join('data', 'wanikani', output_filename)
+    full_output_path = os.path.join('data', output_filename)
     
     # Save the DataFrame to an Excel file
     df.to_excel(full_output_path, index=False, engine='openpyxl')
@@ -117,15 +124,29 @@ def find_latest_wanikani_file(directory):
     else:
         print("No matching files found.")
         return None
+    
+def save_data(parsed_subjects, output_filename, format='excel'):
+    """
+    Saves parsed subjects to a file in the specified format.
+    """
+    df = pd.DataFrame(parsed_subjects)
+    full_output_path = os.path.join('data', output_filename)
+
+    if format == 'excel':
+        df.to_excel(full_output_path, index=False, engine='openpyxl')
+        print(f"Data saved to {full_output_path} as Excel file.")
+    elif format == 'parquet':
+        df.to_parquet(full_output_path, index=False, engine='auto')  # 'auto' will choose an available engine
+        print(f"Data saved to {full_output_path} as Parquet file.")
 
 # Example usage
 if __name__=='__main__':
-    directory = os.path.join('data', 'wanikani')  # Specify the directory containing your files
+    directory = os.path.join('data')  # Specify the directory containing your files
     filename = find_latest_wanikani_file(directory)  # This will be the full path to the file
     if filename:
         subjects = load_subjects_from_file(os.path.basename(filename))  # Since load_subjects_from_file expects just the filename, not the path
         parsed_subjects = parse_subjects(subjects)
-        output_filename = 'wanikani_subjects.xlsx'  # Specify your desired output filename
-        save_to_excel(parsed_subjects, output_filename)
+        save_data(parsed_subjects, 'wanikani_subjects.xlsx', 'excel')
+        save_data(parsed_subjects, 'wanikani_subjects.parquet', 'parquet')
     else:
         print("Failed to load subjects: No suitable file found.")

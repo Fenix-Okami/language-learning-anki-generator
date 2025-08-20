@@ -24,7 +24,7 @@ def fetch_all_subjects(api_token):
     
     return subjects
 
-def cache_data(subjects, directory='data/wanikani', base_filename='wanikani_subjects_cache'):
+def cache_data(subjects, directory='data', base_filename='wanikani_subjects_cache'):
     """
     Caches the fetched subjects data to a JSON file in a specified directory,
     including the current date in the filename.
