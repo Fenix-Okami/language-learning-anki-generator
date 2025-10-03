@@ -59,7 +59,7 @@ Import any of these into Anki!
 ```bash
 python wanikani_prefect_flow.py
 ```
-- Uses cached data if < 7 days old
+- Uses cached data if < 180 days old (~6 months)
 - Fast execution
 - API-friendly
 

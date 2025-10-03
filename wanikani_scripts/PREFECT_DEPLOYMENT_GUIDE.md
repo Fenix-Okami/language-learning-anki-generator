@@ -1,7 +1,18 @@
 # Prefect Deployment Guide for WaniKani → Anki Pipeline
 ## On-Demand Execution (No Scheduling)
 
-This pipeline is designed for **manual, on-demand execution** only.
+This pipeline is designed for **manual, on-demand execution*### **Using Cache (Default Behavior)**
+
+```bash
+# ### **1. `wanikani_anki_pipeline()` - Main Flow (Flexible)**
+```python
+# Smart caching with configurable parameters
+wanikani_anki_pipeline(
+    use_cached=True,          # Use cache if available
+    max_cache_age_days=180,   # Cache valid for 180 days (6 months)
+    force_refresh=False        # Don't force API fetch
+)he if < 180 days old
+python wanikani_prefect_flow.pyy.
 
 ---
 

@@ -80,7 +80,7 @@ cd wanikani_scripts
 ```bash
 cd wanikani_scripts
 
-# Default (uses cache if < 7 days old)
+# Default (uses cache if < 180 days old / ~6 months)
 python wanikani_prefect_flow.py
 
 # Force fresh
@@ -117,8 +117,8 @@ prefect deployment run "WaniKani → Anki Generator/WaniKani Anki Generator"
 ```
 1. Check if cache exists
 2. Check cache age
-3. If cache < 7 days old → Use it (fast!)
-4. If cache > 7 days old → Fetch fresh from API
+3. If cache < 180 days old → Use it (fast!)
+4. If cache > 180 days old → Fetch fresh from API
 5. Always transform, load, and generate decks
 ```
 
@@ -143,7 +143,7 @@ prefect deployment run "WaniKani → Anki Generator/WaniKani Anki Generator"
 ```
 ┌─────────────────────────────────────────────────┐
 │  Cache Freshness Check                          │
-│  • Is cache < 7 days old?                       │
+│  • Is cache < 180 days old (~6 months)?         │
 └─────────────────────────────────────────────────┘
               ↓
     ┌─────────┴─────────┐
@@ -229,7 +229,7 @@ data/
 ```python
 wanikani_anki_pipeline(
     use_cached=True,
-    max_cache_age_days=7,
+    max_cache_age_days=180,  # ~6 months
     force_refresh=False
 )
 ```

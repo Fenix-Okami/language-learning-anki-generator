@@ -37,7 +37,7 @@ API_MAX_RETRIES = 3
 API_RETRY_DELAY_SECONDS = 5
 
 # Cache configuration
-DEFAULT_MAX_CACHE_AGE_DAYS = 7
+DEFAULT_MAX_CACHE_AGE_DAYS = 180  # Only fetch fresh if cache is older than 180 days
 
 # Anki deck names
 ANKI_DECK_NAMES = {
